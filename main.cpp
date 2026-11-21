@@ -1,31 +1,31 @@
 // COMSC 210 | Lab 36 | Yeji Kim
 #include <iostream>
+#include <fstream>
+#include <string>
 #include "IntBinaryTree.h"
 using namespace std;
 
 int main() {
     IntBinaryTree tree;
+    string code;
+    int count = 0;
+    ifstream inputFile("codes.txt");
 
-    // Insert some string values
-    tree.insertNode("B12");
-    tree.insertNode("A25");
-    tree.insertNode("C30");
-    tree.insertNode("D15");
+    if (!inputFile) {
+        cout << "Error opening codes.txt" << endl;
+        return 1;
+    }
 
-    cout << "Inorder traversal:" << endl;
-    tree.displayInOrder();
+    // Read each code and insert it into the tree.
+    while (getline(inputFile, code)) {
+        tree.insertNode(code);
+        count++;
+    }
 
-    cout << "\nSearching for B12:" << endl;
-    cout << (tree.searchNode("B12") ? "Found" : "Not found") << endl;
+    inputFile.close();
 
-    cout << "\nSearching for X99:" << endl;
-    cout << (tree.searchNode("X99") ? "Found" : "Not found") << endl;
-
-    cout << "\nRemoving B12..." << endl;
-    tree.remove("B12");
-
-    cout << "\nInorder traversal after removal:" << endl;
-    tree.displayInOrder();
+    cout << "Codes loaded successfully!" << endl;
+    cout << "Total codes loaded: " << count << endl;
 
     return 0;
 }
