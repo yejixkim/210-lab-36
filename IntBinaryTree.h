@@ -114,7 +114,7 @@ void IntBinaryTree::remove(string num) {
 // member is the same as num.          
 void IntBinaryTree::deleteNode(string num, TreeNode *&nodePtr) {
    if (nodePtr == nullptr)
-   return;
+      return;
 
    if (num < nodePtr->value)
       deleteNode(num, nodePtr->left);
@@ -128,34 +128,52 @@ void IntBinaryTree::deleteNode(string num, TreeNode *&nodePtr) {
 // makeDeletion takes a reference to a pointer to the node 
 // that is to be deleted. The node is removed and the      
 // branches of the tree below the node are reattached.     
+
 void IntBinaryTree::makeDeletion(TreeNode *&nodePtr) {
-   // Define a temporary pointer to use in reattaching
-   // the left subtree.
    TreeNode *tempNodePtr;
 
    if (!nodePtr)
-      cout << "Cannot delete empty node.\n";
+      return;
+
+   // If there is no right child, replace with left child.
    else if (!nodePtr->right) {
       tempNodePtr = nodePtr;
-      nodePtr = nodePtr->left;   // Reattach the left child
-      delete tempNodePtr;
-   } else if (!nodePtr->left) {
-      tempNodePtr = nodePtr;
-      nodePtr = nodePtr->right;  // Reattach the right child
+      nodePtr = nodePtr->left;
       delete tempNodePtr;
    }
+
+   // If there is no left child, replace with right child.
+   else if (!nodePtr->left) {
+      tempNodePtr = nodePtr;
+      nodePtr = nodePtr->right;
+      delete tempNodePtr;
+   }
+
    // If the node has two children.
    else {
-      // Move one node the right.
-      tempNodePtr = nodePtr->right;
-      // Go to the end left node.
-      while (tempNodePtr->left)
-         tempNodePtr = tempNodePtr->left;
-      // Reattach the left subtree.
-      tempNodePtr->left = nodePtr->left;
+      TreeNode *parent = nodePtr;
+      TreeNode *successor = nodePtr->right;
+
+      // Find the smallest node in the right subtree.
+      while (successor->left) {
+         parent = successor;
+         successor = successor->left;
+      }
+
+      // Detach the successor from its original position.
+      if (parent != nodePtr)
+         parent->left = successor->right;
+      else
+         parent->right = successor->right;
+
+      // Replace the deleted node with the successor.
+      successor->left = nodePtr->left;
+
+      if (parent == nodePtr)
+         successor->right = nodePtr->right;
+
       tempNodePtr = nodePtr;
-      // Reattach the right subtree.
-      nodePtr = nodePtr->right;
+      nodePtr = successor;
       delete tempNodePtr;
    }
 }
